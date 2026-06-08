@@ -19,9 +19,11 @@ this guide. You still substitute these as you go:
 | Placeholder      | Meaning                     | Example      |
 | ---------------- | --------------------------- | ------------ |
 | `YOUR_SERVER_IP` | VPS public IPv4 (and IPv6)  | `51.210.x.x` |
-| `ADMIN`          | Your sudo admin user        | `piotr`      |
 
-(`deploy` is the CI user name — keep it or rename consistently everywhere.)
+You log in as OVH's default **`ubuntu`** user. It has passwordless `sudo`, and root
+login is disabled — that's OVH's normal setup and all you need; every `sudo`
+command below works as `ubuntu`. `deploy` is a separate low-privilege user for CI,
+created in A5.
 
 ---
 
@@ -30,7 +32,8 @@ this guide. You still substitute these as you go:
 ### A1. Create the VPS & DNS
 
 1. OVHcloud panel → order a **VPS** → image **Ubuntu 24.04**. Note the public
-   **IPv4** (and **IPv6** if provided) and the initial root/ubuntu credentials.
+   **IPv4** (and **IPv6** if provided) and the `ubuntu` user's credentials (SSH
+   key or password — set when you order the VPS).
 2. At your DNS provider (OVH **Domain → DNS zone**, or wherever the domain lives),
    create records pointing at the VPS:
 
@@ -50,36 +53,37 @@ this guide. You still substitute these as you go:
 ### A2. First login & system update
 
 ```bash
-ssh root@YOUR_SERVER_IP        # or: ssh ubuntu@YOUR_SERVER_IP
-apt update && apt -y upgrade
+ssh ubuntu@YOUR_SERVER_IP
+sudo apt update && sudo apt -y upgrade
 ```
 
-### A3. Admin user, SSH hardening, firewall
-
-Create a sudo admin (skip if OVH already gave you a non-root `ubuntu` user — just
-`usermod -aG sudo ubuntu`):
+Confirm you have admin rights (must print `root`):
 
 ```bash
-adduser ADMIN
-usermod -aG sudo ADMIN
-rsync --archive --chown=ADMIN:ADMIN ~/.ssh /home/ADMIN   # copy your SSH key in
+sudo whoami
 ```
 
-Firewall (allow SSH + web before enabling, or you will lock yourself out):
+### A3. Firewall & SSH hardening
+
+No admin user to create — you already have `ubuntu` with sudo, and OVH already
+disabled root login. Just lock down the firewall and SSH.
+
+Firewall (allow SSH + web **before** enabling, or you lock yourself out):
 
 ```bash
-apt -y install ufw
-ufw allow OpenSSH
-ufw allow 'Nginx Full'        # opens 80 + 443
-ufw --force enable
-ufw status
+sudo apt -y install ufw
+sudo ufw allow OpenSSH
+sudo ufw allow 'Nginx Full'        # opens 80 + 443
+sudo ufw --force enable
+sudo ufw status
 ```
 
-Harden SSH — disable root login and passwords (confirm key login as `ADMIN`
-works in a **second** terminal first):
+Harden SSH. **Only disable password auth if you log in with an SSH key.** If you
+currently use a password, first add your key from your laptop
+(`ssh-copy-id ubuntu@YOUR_SERVER_IP`) and confirm key login works in a **second**
+terminal — otherwise you lock yourself out.
 
 ```bash
-sudo sed -i 's/^#\?PermitRootLogin.*/PermitRootLogin no/'        /etc/ssh/sshd_config
 sudo sed -i 's/^#\?PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config
 sudo systemctl restart ssh
 ```
@@ -100,7 +104,14 @@ Visiting `http://YOUR_SERVER_IP` should show the nginx welcome page.
 The deploy user is intentionally minimal: **no sudo**, owns only the web root.
 CI logs in as this user to rsync files.
 
+Where each piece lives:
+- **`deploy` user** → on the **VPS** (the account GitHub Actions logs into).
+- **CI public key** → on the **VPS**, in `/home/deploy/.ssh/authorized_keys`.
+- **CI private key** → in **GitHub** (the `DEPLOY_SSH_KEY` secret).
+- **Your laptop** → only generates the keypair here; not involved in deploys.
+
 ```bash
+# --- on the VPS (logged in as ubuntu) ---
 # dedicated CI user
 sudo adduser --disabled-password --gecos "" deploy
 
@@ -110,15 +121,22 @@ sudo chown -R deploy:www-data /var/www/imaginative-input.pl
 sudo chmod -R 755 /var/www/imaginative-input.pl
 ```
 
+> `deploy` has **no password** (`--disabled-password`) — it's SSH-key-only, by
+> design, so blank/any password will fail. Don't set one. To run something as
+> `deploy` while on the VPS, use `ubuntu`'s sudo (no password needed):
+> `sudo -u deploy -s`.
+
 Generate a **dedicated CI keypair** (on your laptop, not the server):
 
 ```bash
+# --- on your laptop ---
 ssh-keygen -t ed25519 -f ~/.ssh/portfolio_deploy -C "github-actions-deploy" -N ""
 ```
 
 Install the **public** half for the deploy user on the server:
 
 ```bash
+# --- on the VPS (as ubuntu) ---
 sudo install -d -m 700 -o deploy -g deploy /home/deploy/.ssh
 # paste the contents of ~/.ssh/portfolio_deploy.pub on the next line:
 echo 'ssh-ed25519 AAAA... github-actions-deploy' | sudo tee -a /home/deploy/.ssh/authorized_keys
@@ -127,9 +145,11 @@ sudo chmod 600 /home/deploy/.ssh/authorized_keys
 ```
 
 Keep the **private** half (`~/.ssh/portfolio_deploy`) — it goes into a GitHub
-secret in Part B. Test it:
+secret in Part B. Test it **from your laptop** (this is exactly what CI does —
+connect in from outside as `deploy`):
 
 ```bash
+# --- on your laptop ---
 ssh -i ~/.ssh/portfolio_deploy deploy@YOUR_SERVER_IP 'echo ok && ls -la /var/www/imaginative-input.pl'
 ```
 
@@ -140,7 +160,7 @@ set), enable it, and reload:
 
 ```bash
 # from your laptop, in the repo:
-scp deploy/nginx/portfolio.conf ADMIN@YOUR_SERVER_IP:/tmp/
+scp deploy/nginx/portfolio.conf ubuntu@YOUR_SERVER_IP:/tmp/
 
 # on the server:
 sudo mv /tmp/portfolio.conf /etc/nginx/sites-available/imaginative-input.pl

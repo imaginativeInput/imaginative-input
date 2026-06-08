@@ -36,3 +36,11 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.temp
+
+# Agent / tooling scratch (not part of the site)
+.playwright-mcp/
+
+# Email signature — separate deliverable, unrelated to the site build/deploy
+email-assets/
+email-signature*.html
+sig.png
