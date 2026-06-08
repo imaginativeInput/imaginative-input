@@ -7,7 +7,7 @@
         <div class="about-text">
           <p class="section-label reveal">// 01. about</p>
           <h2 class="section-title reveal reveal-delay-1">
-            A little about <span class="gradient-text">me</span>
+            A little about <span class="accent-text">me</span>
           </h2>
           <p class="about-desc reveal reveal-delay-2">
             I'm a software developer from Piaseczno, Poland with a background in both development
@@ -149,7 +149,8 @@ const hobbies = [
   transition: var(--transition);
 }
 .hobby-chip:hover {
-  border-color: var(--accent);
+  border-color: var(--border-bright);
+  background: rgba(255, 255, 255, 0.03);
   color: var(--text);
 }
 
@@ -163,7 +164,7 @@ const hobbies = [
   border: 1px solid var(--border);
   border-radius: var(--radius);
   overflow: hidden;
-  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.03);
+  box-shadow: var(--shadow-float);
 }
 
 .code-titlebar {
@@ -172,7 +173,7 @@ const hobbies = [
   gap: 8px;
   padding: 12px 18px;
   background: var(--surface-2);
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .mac-dots { display: flex; gap: 6px; }

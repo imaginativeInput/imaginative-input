@@ -303,7 +303,7 @@ async function scroll() {
   align-items: center;
   gap: 8px;
   padding: 9px 16px;
-  background: rgba(24, 24, 27, 0.9);
+  background: rgba(20, 27, 41, 0.9);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--border);
@@ -313,22 +313,22 @@ async function scroll() {
   font-size: 0.78rem;
   cursor: pointer;
   transition: var(--transition);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+  box-shadow: var(--shadow-md);
 }
 .term-toggle:hover {
-  border-color: var(--terminal-green);
-  background: rgba(24, 24, 27, 0.95);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(74, 222, 128, 0.15);
+  border-color: var(--border-bright);
+  background: rgba(20, 27, 41, 0.95);
+  box-shadow: var(--shadow-md), var(--ring);
 }
 
 /* ── Panel ──────────────────────────────────────────────────────────────────── */
 .term-panel {
   width: 440px;
   max-height: 370px;
-  background: rgba(12, 12, 18, 0.92);
+  background: rgba(10, 15, 24, 0.92);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(63, 63, 70, 0.7);
+  border: 1px solid var(--hairline);
   border-radius: var(--radius);
   overflow: hidden;
   display: flex;
@@ -336,9 +336,7 @@ async function scroll() {
   font-family: var(--font-mono);
   font-size: 0.76rem;
   line-height: 1.65;
-  box-shadow:
-    0 24px 80px rgba(0, 0, 0, 0.6),
-    0 0 0 1px rgba(255, 255, 255, 0.04);
+  box-shadow: var(--shadow-float);
 }
 
 /* ── macOS titlebar ─────────────────────────────────────────────────────────── */
@@ -348,7 +346,7 @@ async function scroll() {
   gap: 8px;
   padding: 11px 14px;
   background: rgba(255, 255, 255, 0.03);
-  border-bottom: 1px solid rgba(63, 63, 70, 0.5);
+  border-bottom: 1px solid var(--border-subtle);
   flex-shrink: 0;
 }
 
@@ -404,7 +402,7 @@ async function scroll() {
   opacity: 0.7;
   line-height: 1.7;
   padding-bottom: 5px;
-  border-bottom: 1px solid rgba(63, 63, 70, 0.3);
+  border-bottom: 1px solid var(--border-subtle);
   margin-bottom: 3px;
   font-size: 0.73rem;
 }
@@ -426,7 +424,7 @@ async function scroll() {
   display: flex;
   align-items: center;
   padding: 9px 16px;
-  border-top: 1px solid rgba(63, 63, 70, 0.4);
+  border-top: 1px solid var(--border-subtle);
   flex-shrink: 0;
   cursor: text;
 }
@@ -442,7 +440,7 @@ async function scroll() {
   caret-color: var(--terminal-green);
   min-width: 0;
 }
-.term-input::placeholder { color: rgba(63, 63, 70, 0.8); }
+.term-input::placeholder { color: rgba(255, 255, 255, 0.25); }
 
 /* ── Slide transition ────────────────────────────────────────────────────────── */
 .term-slide-enter-active,

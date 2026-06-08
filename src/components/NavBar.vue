@@ -77,7 +77,8 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
   background: rgba(9, 9, 11, 0.88);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border-bottom: 1px solid rgba(63, 63, 70, 0.4);
+  border-bottom: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-sm);
   padding: 14px 0;
 }
 
@@ -125,7 +126,7 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
   left: 0;
   width: 0;
   height: 1px;
-  background: var(--gradient);
+  background: var(--accent-solid);
   transition: width var(--transition);
 }
 .nav-link:hover { color: var(--text); }

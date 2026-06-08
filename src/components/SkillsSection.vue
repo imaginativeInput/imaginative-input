@@ -3,7 +3,7 @@
     <div class="container">
       <p class="section-label reveal">// 04. skills</p>
       <h2 class="section-title reveal reveal-delay-1">
-        Tech <span class="gradient-text">stack</span>
+        Tech <span class="accent-text">stack</span>
       </h2>
       <p class="section-subtitle reveal reveal-delay-1">
         Tools and technologies I reach for regularly.
@@ -17,7 +17,7 @@
           :key="cat.name"
         >
           <h3 class="cat-heading">
-            <span class="cat-icon" aria-hidden="true">{{ cat.icon }}</span>
+            <span class="cat-icon" aria-hidden="true" v-html="icons[cat.icon]"></span>
             {{ cat.name }}
           </h3>
 
@@ -44,7 +44,7 @@
 <script setup>
 const categories = [
   {
-    icon: '⚙️',
+    icon: 'code',
     name: 'Languages',
     skills: [
       { name: 'Python',     level: 85, label: 'Advanced' },
@@ -53,7 +53,7 @@ const categories = [
     ],
   },
   {
-    icon: '🖥️',
+    icon: 'monitor',
     name: 'Frontend',
     skills: [
       { name: 'Vue.js',    level: 74, label: 'Proficient' },
@@ -61,7 +61,7 @@ const categories = [
     ],
   },
   {
-    icon: '🔧',
+    icon: 'database',
     name: 'Backend & Data',
     skills: [
       { name: 'FastAPI',    level: 82, label: 'Proficient' },
@@ -70,7 +70,7 @@ const categories = [
     ],
   },
   {
-    icon: '🧪',
+    icon: 'check',
     name: 'Testing & QA',
     skills: [
       { name: 'Playwright', level: 82, label: 'Proficient' },
@@ -80,7 +80,7 @@ const categories = [
     ],
   },
   {
-    icon: '🛠️',
+    icon: 'gear',
     name: 'Tools & DevOps',
     skills: [
       { name: 'Git & GitHub',  level: 72, label: 'Advanced' },
@@ -90,7 +90,7 @@ const categories = [
     ],
   },
   {
-    icon: '✨',
+    icon: 'sparkles',
     name: 'Specialised Tech',
     skills: [
       { name: 'Taichi Lang', level: 50, label: 'Exploring' },
@@ -98,13 +98,18 @@ const categories = [
     ],
   },
 ]
+
+const icons = {
+  code: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/></svg>`,
+  monitor: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>`,
+  database: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>`,
+  check: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 4.5-5"/></svg>`,
+  gear: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 2v3"/><path d="M12 19v3"/><path d="M2 12h3"/><path d="M19 12h3"/><path d="m4.9 4.9 2.1 2.1"/><path d="m17 17 2.1 2.1"/><path d="m19.1 4.9-2.1 2.1"/><path d="m7 17-2.1 2.1"/></svg>`,
+  sparkles: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 4.8L18.5 9.5l-4.6 1.7L12 16l-1.9-4.8L5.5 9.5l4.6-1.7z"/><path d="M19 14.5l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/></svg>`,
+}
 </script>
 
 <style scoped>
-.skills-section {
-  background: linear-gradient(180deg, transparent 0%, rgba(99, 102, 241, 0.025) 50%, transparent 100%);
-}
-
 .skills-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -117,11 +122,12 @@ const categories = [
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 26px 28px;
+  box-shadow: var(--shadow-sm);
   transition: var(--transition);
 }
 .skill-cat:hover {
-  border-color: rgba(99, 102, 241, 0.3);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  border-color: var(--border-bright);
+  box-shadow: var(--shadow-card);
 }
 
 .cat-heading {
@@ -134,7 +140,15 @@ const categories = [
   gap: 8px;
 }
 
-.cat-icon { font-size: 1rem; }
+.cat-icon {
+  display: inline-flex;
+  align-items: center;
+  color: var(--accent);
+}
+.cat-icon :deep(svg) {
+  width: 18px;
+  height: 18px;
+}
 
 .skill-rows {
   display: flex;
@@ -168,7 +182,7 @@ const categories = [
 
 .skill-track {
   height: 3px;
-  background: var(--surface-2);
+  background: rgba(255, 255, 255, 0.06);
   border-radius: 999px;
   overflow: hidden;
 }
@@ -176,9 +190,9 @@ const categories = [
 .skill-bar {
   height: 100%;
   width: 0;
-  background: var(--gradient);
+  background: var(--accent-solid);
   border-radius: 999px;
-  animation: fill-bar 1.2s ease forwards;
+  animation: fill-bar 1.2s var(--ease-out) forwards;
   animation-play-state: paused;
 }
 

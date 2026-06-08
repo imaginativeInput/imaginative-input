@@ -1,0 +1,64 @@
+name: Deploy to VPS
+
+# Build the static site in CI, then rsync dist/ to the OVHcloud VPS over SSH.
+# The VPS only runs nginx — no Node/npm in production.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {} # allow manual runs from the Actions tab
+
+# Never let two deploys race onto the server at once.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Setup Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Load deploy SSH key
+        uses: webfactory/ssh-agent@dc588b651fe13675774614f8e6a936a468676387 # v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
+
+      - name: Pin server host key
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          ssh-keyscan -p "${{ secrets.SSH_PORT || '22' }}" -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Deploy with rsync
+        run: |
+          rsync -avz --delete \
+            -e "ssh -p ${{ secrets.SSH_PORT || '22' }}" \
+            dist/ \
+            "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOY_PATH }}/"
+
+# Required repository secrets (Settings -> Secrets and variables -> Actions):
+#   DEPLOY_SSH_KEY  private key (ed25519) whose public half is in the deploy
+#                   user's ~/.ssh/authorized_keys on the VPS
+#   SSH_HOST        server IP or domain
+#   SSH_USER        deploy user (e.g. "deploy")
+#   DEPLOY_PATH     web root, e.g. "/var/www/imaginative-input.pl"
+#   SSH_PORT        (optional) SSH port; defaults to 22
+#
+# Actions are pinned to commit SHAs (the trailing comment shows the version).
+# To bump one: gh api repos/<owner>/<repo>/commits/<new-tag> --jq .sha

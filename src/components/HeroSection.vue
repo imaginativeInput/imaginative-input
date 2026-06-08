@@ -2,7 +2,7 @@
   <section id="home" class="hero">
     <!-- Background -->
     <div class="hero-bg" aria-hidden="true">
-      <div class="grid"></div>
+      <div class="stars"></div>
       <div class="glow g1"></div>
       <div class="glow g2"></div>
     </div>
@@ -16,7 +16,7 @@
 
         <h1 class="hero-name reveal reveal-delay-1">
           Piotr<br>
-          <span class="gradient-text">Łatyński</span>
+          <span class="accent-text">Łatyński</span>
         </h1>
 
         <p class="hero-role reveal reveal-delay-2">
@@ -50,28 +50,14 @@
       <!-- Profile picture -->
       <div class="hero-right reveal reveal-delay-2">
         <div class="pic-frame">
-          <!-- Corner brackets -->
-          <span class="cb tl" aria-hidden="true"></span>
-          <span class="cb tr" aria-hidden="true"></span>
-          <span class="cb bl" aria-hidden="true"></span>
-          <span class="cb br" aria-hidden="true"></span>
-
           <div class="pic-inner">
             <img
-              src="/profile-pic.png"
+              :src="profilePic"
               alt="Piotr Łatyński"
               class="pic-img"
               loading="eager"
             />
             <div class="pic-overlay" aria-hidden="true"></div>
-          </div>
-
-          <!-- HUD label beneath image -->
-          <div class="pic-hud" aria-hidden="true">
-            <span class="hud-dot"></span>
-            <span class="hud-text">PIOTR&nbsp;ŁATYŃSKI</span>
-            <span class="hud-sep">//</span>
-            <span class="hud-text">DEV</span>
           </div>
         </div>
       </div>
@@ -85,6 +71,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+import profilePic from '@/assets/profile-pic.webp'
 
 defineEmits(['navigate'])
 
@@ -124,7 +111,15 @@ function tick() {
   }
 }
 
-onMounted(() => tick())
+onMounted(() => {
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  if (reduce) {
+    displayedRole.value = roles[0]
+    isTyping.value = false
+    return
+  }
+  tick()
+})
 onUnmounted(() => clearTimeout(timeout))
 </script>
 
@@ -147,13 +142,24 @@ onUnmounted(() => clearTimeout(timeout))
   z-index: 0;
 }
 
-.grid {
+.stars {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(99, 102, 241, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(99, 102, 241, 0.05) 1px, transparent 1px);
-  background-size: 60px 60px;
+    radial-gradient(1px 1px at 20px 30px, rgba(255, 255, 255, 0.5), transparent),
+    radial-gradient(1px 1px at 90px 80px, rgba(74, 222, 128, 0.5), transparent),
+    radial-gradient(1.5px 1.5px at 150px 50px, rgba(255, 255, 255, 0.35), transparent),
+    radial-gradient(1px 1px at 210px 120px, rgba(255, 255, 255, 0.45), transparent),
+    radial-gradient(1px 1px at 260px 30px, rgba(74, 222, 128, 0.4), transparent),
+    radial-gradient(1px 1px at 50px 160px, rgba(255, 255, 255, 0.3), transparent),
+    radial-gradient(1.5px 1.5px at 130px 200px, rgba(255, 255, 255, 0.4), transparent),
+    radial-gradient(1px 1px at 230px 190px, rgba(168, 198, 178, 0.4), transparent),
+    radial-gradient(1px 1px at 300px 100px, rgba(74, 222, 128, 0.35), transparent);
+  background-size: 320px 320px;
+  background-repeat: repeat;
+  opacity: 0.7;
+  -webkit-mask-image: radial-gradient(ellipse at center, #000 35%, transparent 80%);
+  mask-image: radial-gradient(ellipse at center, #000 35%, transparent 80%);
 }
 
 .glow {
@@ -165,16 +171,16 @@ onUnmounted(() => clearTimeout(timeout))
 .g1 {
   width: 700px;
   height: 700px;
-  background: radial-gradient(circle, #7c3aed 0%, transparent 70%);
-  opacity: 0.08;
+  background: radial-gradient(circle, #22c55e 0%, transparent 70%);
+  opacity: 0.04;
   top: -250px;
   right: -150px;
 }
 .g2 {
   width: 450px;
   height: 450px;
-  background: radial-gradient(circle, #4c1d95 0%, transparent 70%);
-  opacity: 0.12;
+  background: radial-gradient(circle, #0f5132 0%, transparent 70%);
+  opacity: 0.05;
   bottom: 0;
   left: -50px;
 }
@@ -199,12 +205,12 @@ onUnmounted(() => clearTimeout(timeout))
   align-items: center;
   gap: 8px;
   padding: 5px 14px;
-  background: rgba(74, 222, 128, 0.06);
-  border: 1px solid rgba(74, 222, 128, 0.2);
-  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--hairline);
+  border-radius: 4px;
   font-family: var(--font-mono);
   font-size: 0.7rem;
-  color: var(--terminal-green);
+  color: var(--text-muted);
   margin-bottom: 28px;
   letter-spacing: 0.05em;
 }
@@ -215,7 +221,6 @@ onUnmounted(() => clearTimeout(timeout))
   background: var(--terminal-green);
   border-radius: 50%;
   animation: dot-pulse 2s ease-in-out infinite;
-  box-shadow: 0 0 6px var(--terminal-green);
 }
 
 @keyframes dot-pulse {
@@ -293,26 +298,16 @@ onUnmounted(() => clearTimeout(timeout))
 .pic-frame {
   position: relative;
   display: inline-block;
-  padding: 10px;
 }
-
-/* HUD corner brackets */
-.cb {
-  position: absolute;
-  width: 22px;
-  height: 22px;
-  z-index: 2;
-}
-.cb.tl { top: 0;  left: 0;  border-top: 2px solid var(--accent); border-left: 2px solid var(--accent); }
-.cb.tr { top: 0;  right: 0; border-top: 2px solid var(--accent); border-right: 2px solid var(--accent); }
-.cb.bl { bottom: 28px; left: 0;  border-bottom: 2px solid var(--accent); border-left: 2px solid var(--accent); }
-.cb.br { bottom: 28px; right: 0; border-bottom: 2px solid var(--accent); border-right: 2px solid var(--accent); }
 
 .pic-inner {
   position: relative;
   width: 300px;
   height: 300px;
   overflow: hidden;
+  border-radius: var(--radius);
+  border: 1px solid var(--hairline);
+  box-shadow: var(--shadow-lg);
 }
 
 .pic-img {
@@ -321,43 +316,16 @@ onUnmounted(() => clearTimeout(timeout))
   object-fit: cover;
   object-position: top center;
   display: block;
-  filter: brightness(0.88) contrast(1.05) saturate(0.75);
+  filter: brightness(0.97) contrast(1.02) saturate(0.95);
 }
 
 /* Subtle vignette overlay */
 .pic-overlay {
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(to bottom, transparent 60%, rgba(6, 6, 14, 0.6) 100%),
-    linear-gradient(to right, rgba(6, 6, 14, 0.15) 0%, transparent 30%, transparent 70%, rgba(6, 6, 14, 0.15) 100%);
+  background: linear-gradient(to bottom, transparent 70%, rgba(6, 6, 14, 0.45) 100%);
   pointer-events: none;
 }
-
-/* HUD label below photo */
-.pic-hud {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding: 5px 8px;
-  background: rgba(6, 6, 14, 0.9);
-  border: 1px solid rgba(99, 102, 241, 0.25);
-  border-top: none;
-  font-family: var(--font-mono);
-  font-size: 0.62rem;
-  letter-spacing: 0.12em;
-}
-
-.hud-dot {
-  width: 5px;
-  height: 5px;
-  background: var(--terminal-green);
-  border-radius: 50%;
-  box-shadow: 0 0 5px var(--terminal-green);
-  flex-shrink: 0;
-}
-.hud-text { color: var(--text-muted); }
-.hud-sep  { color: var(--accent); }
 
 /* Scroll cue */
 .scroll-cue {
@@ -399,8 +367,6 @@ onUnmounted(() => clearTimeout(timeout))
     order: -1;
   }
   .pic-inner { width: 200px; height: 200px; }
-  .cb.bl { bottom: 28px; }
-  .cb.br { bottom: 28px; }
 }
 
 @media (max-width: 640px) {

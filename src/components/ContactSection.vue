@@ -7,7 +7,7 @@
         <div class="contact-left">
           <p class="section-label reveal">// 05. contact</p>
           <h2 class="section-title reveal reveal-delay-1">
-            Let's <span class="gradient-text">connect</span>
+            Let's <span class="accent-text">connect</span>
           </h2>
           <p class="contact-desc reveal reveal-delay-1">
             Got a project in mind or just want to talk shop?
@@ -57,7 +57,7 @@
     <footer class="footer">
       <div class="container footer-inner">
         <p class="footer-copy">
-          Built with <span class="gradient-text">Vue.js</span> &nbsp;·&nbsp; Piotr Łatyński © {{ year }}
+          Built with <span class="accent-text">Vue.js</span> &nbsp;·&nbsp; Piotr Łatyński © {{ year }}
         </p>
         <p class="footer-tip">
           <span class="mono-hint">$</span>&nbsp;Try the terminal in the corner ↘
@@ -131,9 +131,9 @@ const contacts = [
   transition: var(--transition);
 }
 .contact-row:hover {
-  border-color: rgba(99, 102, 241, 0.38);
-  transform: translateX(4px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  border-color: var(--border-bright);
+  transform: translateX(3px);
+  box-shadow: var(--shadow-sm);
 }
 
 .c-icon {
@@ -142,7 +142,7 @@ const contacts = [
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(99, 102, 241, 0.08);
+  background: rgba(34, 197, 94, 0.08);
   border-radius: 8px;
   color: var(--accent);
   flex-shrink: 0;
@@ -188,6 +188,7 @@ const contacts = [
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 36px;
+  box-shadow: var(--shadow-card);
   position: sticky;
   top: 100px;
 }
@@ -198,9 +199,9 @@ const contacts = [
   gap: 8px;
   font-family: var(--font-mono);
   font-size: 0.72rem;
-  color: var(--terminal-green);
-  background: rgba(74, 222, 128, 0.07);
-  border: 1px solid rgba(74, 222, 128, 0.2);
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--hairline);
   padding: 5px 12px;
   border-radius: 999px;
   margin-bottom: 22px;
@@ -243,7 +244,7 @@ const contacts = [
 .footer {
   margin-top: 90px;
   padding: 24px 0;
-  border-top: 1px solid rgba(63, 63, 70, 0.4);
+  border-top: 1px solid var(--border-subtle);
 }
 
 .footer-inner {

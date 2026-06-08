@@ -3,7 +3,7 @@
     <div class="container">
       <p class="section-label reveal">// 03. experience</p>
       <h2 class="section-title reveal reveal-delay-1">
-        Work <span class="gradient-text">history</span>
+        Work <span class="accent-text">history</span>
       </h2>
 
       <div class="timeline">
@@ -105,9 +105,9 @@ const experience = [
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: var(--gradient);
+  background: var(--accent-solid);
   flex-shrink: 0;
-  box-shadow: 0 0 14px rgba(99, 102, 241, 0.5);
+  box-shadow: 0 0 0 4px var(--bg), 0 0 0 5px var(--border);
   position: relative;
   z-index: 1;
 }
@@ -116,7 +116,7 @@ const experience = [
   width: 1px;
   flex: 1;
   min-height: 32px;
-  background: linear-gradient(to bottom, rgba(99, 102, 241, 0.5), rgba(99, 102, 241, 0.05));
+  background: linear-gradient(to bottom, var(--border-bright), transparent);
   margin: 8px 0;
 }
 
@@ -126,11 +126,12 @@ const experience = [
   border-radius: var(--radius);
   padding: 28px 32px;
   margin-bottom: 24px;
+  box-shadow: var(--shadow-sm);
   transition: var(--transition);
 }
 .tl-card:hover {
-  border-color: rgba(99, 102, 241, 0.3);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  border-color: var(--border-bright);
+  box-shadow: var(--shadow-card);
 }
 
 .tl-header {
