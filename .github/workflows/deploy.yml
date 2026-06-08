@@ -20,10 +20,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
 
       - name: Setup Node
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
           node-version: 22
           cache: npm
@@ -34,31 +34,30 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Load deploy SSH key
-        uses: webfactory/ssh-agent@dc588b651fe13675774614f8e6a936a468676387 # v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
-
-      - name: Pin server host key
+      - name: Deploy with rsync over SSH
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PORT: ${{ secrets.SSH_PORT || '22' }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
         run: |
-          mkdir -p ~/.ssh
-          chmod 700 ~/.ssh
-          ssh-keyscan -p "${{ secrets.SSH_PORT || '22' }}" -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
-
-      - name: Deploy with rsync
-        run: |
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -p "$SSH_PORT" -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
           rsync -avz --delete \
-            -e "ssh -p ${{ secrets.SSH_PORT || '22' }}" \
-            dist/ \
-            "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOY_PATH }}/"
+            -e "ssh -i ~/.ssh/deploy_key -p $SSH_PORT" \
+            dist/ "$SSH_USER@$SSH_HOST:$DEPLOY_PATH/"
 
 # Required repository secrets (Settings -> Secrets and variables -> Actions):
-#   DEPLOY_SSH_KEY  private key (ed25519) whose public half is in the deploy
+#   DEPLOY_SSH_KEY  the PRIVATE key (contents of ~/.ssh/portfolio_deploy, incl.
+#                   the BEGIN/END lines) whose public half is in the deploy
 #                   user's ~/.ssh/authorized_keys on the VPS
-#   SSH_HOST        server IP or domain
+#   SSH_HOST        server IP or domain (e.g. 146.59.32.243)
 #   SSH_USER        deploy user (e.g. "deploy")
 #   DEPLOY_PATH     web root, e.g. "/var/www/imaginative-input.pl"
 #   SSH_PORT        (optional) SSH port; defaults to 22
 #
-# Actions are pinned to commit SHAs (the trailing comment shows the version).
+# Actions are pinned to commit SHAs (trailing comment shows the version).
 # To bump one: gh api repos/<owner>/<repo>/commits/<new-tag> --jq .sha

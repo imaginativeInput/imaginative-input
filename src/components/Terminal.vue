@@ -233,7 +233,7 @@ function cmdProjects() {
   <div class="tc-green" style="margin-bottom:4px">Projects:</div>
   <div>🏠 <span class="tc-accent">Domek Rzepiska — Vacation Rental</span> <span class="tc-dim">[completed]</span></div>
   <div class="tc-dim" style="padding-left:20px">Vue.js · FastAPI · domekrzepiska.pl</div>
-  <div style="margin-top:5px">🍝 <span class="tc-accent">Italian Restaurant Website</span> <span class="tc-dim">[in progress]</span></div>
+  <div style="margin-top:5px">🍽️ <span class="tc-accent">Restaurant Application Engine</span> <span class="tc-dim">[in progress]</span></div>
   <div class="tc-dim" style="padding-left:20px">Vue.js · FastAPI · CSS</div>
   <div style="margin-top:5px">🎮 <span class="tc-accent">2D Physics Puzzle Game</span> <span class="tc-dim">[in progress]</span></div>
   <div class="tc-dim" style="padding-left:20px">Python · Pygame · Procedural Generation</div>

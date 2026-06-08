@@ -67,11 +67,11 @@ const projects = [
   },
   {
     icon: 'utensils',
-    title: 'Italian Restaurant Website with CMS — SaaS application',
+    title: 'Restaurant Application Engine with CMS — SaaS platform',
     status: 'In progress',
     link: 'https://szamma-mia.pl/',
     description:
-      'A full-featured restaurant website built for an authentic Italian dining experience — elegant design, smooth navigation, and an intuitive reservation and online ordering flow with custom CMS, thoughout database, loyalty and marketing features, and a fast asynchronous API gluing everything together.',
+      'A full-featured engine for building restaurant websites — elegant, responsive design with smooth navigation, an intuitive reservation and online ordering flow, a custom CMS, a well-thought-out database, built-in loyalty and marketing features, and a fast asynchronous API gluing everything together.',
     features: [
       'Responsive, mobile-first design',
       'Interactive menu with category browsing',

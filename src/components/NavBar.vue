@@ -2,9 +2,8 @@
   <nav :class="['navbar', { scrolled: isScrolled }]">
     <div class="nav-container">
       <div class="nav-logo" @click="$emit('navigate', 'home')">
-        <span class="logo-bracket">&lt;</span>
-        <span class="logo-name">piotr.dev</span>
-        <span class="logo-bracket">/&gt;</span>
+        <span class="logo-bracket">$~</span>
+        <span class="logo-name">imaginativeInput</span>
       </div>
 
       <button
