@@ -1,12 +1,10 @@
 <template>
   <section id="skills" class="section skills-section">
     <div class="container">
-      <p class="section-label reveal">// 04. skills</p>
-      <h2 class="section-title reveal reveal-delay-1">
-        Tech <span class="accent-text">stack</span>
-      </h2>
+      <p class="section-label reveal">{{ $t('skills.label') }}</p>
+      <h2 class="section-title reveal reveal-delay-1" v-html="$t('skills.title')"></h2>
       <p class="section-subtitle reveal reveal-delay-1">
-        Tools and technologies I reach for regularly.
+        {{ $t('skills.subtitle') }}
       </p>
 
       <div class="skills-grid">
@@ -14,7 +12,7 @@
           class="skill-cat reveal"
           :class="`reveal-delay-${i + 1}`"
           v-for="(cat, i) in categories"
-          :key="cat.name"
+          :key="i"
         >
           <h3 class="cat-heading">
             <span class="cat-icon" aria-hidden="true" v-html="icons[cat.icon]"></span>
@@ -25,7 +23,7 @@
             <div class="skill-row" v-for="s in cat.skills" :key="s.name">
               <div class="skill-top">
                 <span class="skill-name">{{ s.name }}</span>
-                <span class="skill-label">{{ s.label }}</span>
+                <span class="skill-label">{{ $t('skills.levels.' + s.label) }}</span>
               </div>
               <div class="skill-track">
                 <div
@@ -42,10 +40,14 @@
 </template>
 
 <script setup>
-const categories = [
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { tm } = useI18n()
+
+const categoriesMeta = [
   {
     icon: 'code',
-    name: 'Languages',
     skills: [
       { name: 'Python',     level: 85, label: 'Advanced' },
       { name: 'JavaScript', level: 75, label: 'Proficient' },
@@ -54,7 +56,6 @@ const categories = [
   },
   {
     icon: 'monitor',
-    name: 'Frontend',
     skills: [
       { name: 'Vue.js',    level: 74, label: 'Proficient' },
       { name: 'HTML/CSS',  level: 85, label: 'Advanced' },
@@ -62,7 +63,6 @@ const categories = [
   },
   {
     icon: 'database',
-    name: 'Backend & Data',
     skills: [
       { name: 'FastAPI',    level: 82, label: 'Proficient' },
       { name: 'PostgreSQL', level: 60, label: 'Intermediate' },
@@ -71,7 +71,6 @@ const categories = [
   },
   {
     icon: 'check',
-    name: 'Testing & QA',
     skills: [
       { name: 'Playwright', level: 82, label: 'Proficient' },
       { name: 'Selenium',   level: 86, label: 'Advanced' },
@@ -81,7 +80,6 @@ const categories = [
   },
   {
     icon: 'gear',
-    name: 'Tools & DevOps',
     skills: [
       { name: 'Git & GitHub',  level: 72, label: 'Advanced' },
       { name: 'Azure DevOps',  level: 76, label: 'Proficient' },
@@ -91,13 +89,16 @@ const categories = [
   },
   {
     icon: 'sparkles',
-    name: 'Specialised Tech',
     skills: [
       { name: 'Taichi Lang', level: 50, label: 'Exploring' },
       { name: 'OCR / CV',    level: 64, label: 'Intermediate' },
     ],
   },
 ]
+
+const categories = computed(() =>
+  categoriesMeta.map((c, i) => ({ ...c, name: tm('skills.categories')[i] }))
+)
 
 const icons = {
   code: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/></svg>`,

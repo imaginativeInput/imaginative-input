@@ -1,17 +1,15 @@
 <template>
   <section id="experience" class="section">
     <div class="container">
-      <p class="section-label reveal">// 03. experience</p>
-      <h2 class="section-title reveal reveal-delay-1">
-        Work <span class="accent-text">history</span>
-      </h2>
+      <p class="section-label reveal">{{ $t('experience.label') }}</p>
+      <h2 class="section-title reveal reveal-delay-1" v-html="$t('experience.title')"></h2>
 
       <div class="timeline">
         <div
           class="timeline-item reveal"
           :class="`reveal-delay-${i + 1}`"
           v-for="(exp, i) in experience"
-          :key="exp.role"
+          :key="i"
         >
           <div class="tl-marker">
             <div class="tl-dot"></div>
@@ -28,7 +26,7 @@
             </div>
 
             <ul class="tl-points">
-              <li v-for="pt in exp.points" :key="pt">{{ pt }}</li>
+              <li v-for="(pt, pi) in exp.points" :key="pi">{{ pt }}</li>
             </ul>
 
             <div class="tl-tags">
@@ -42,43 +40,21 @@
 </template>
 
 <script setup>
-const experience = [
-  {
-    role: 'Freelance Software Developer',
-    company: 'Self-employed',
-    period: '2023 — present',
-    points: [
-      'Python & JavaScript automation, workflow tooling, and OCR pipeline development.',
-      'Full-stack development and testing — Vue.js, FastAPI, PostgreSQL, HTML, CSS.',
-      'Built a 2D Python game with procedural generation and physics simulation; used Taichi Lang for parallelization.',
-    ],
-    tags: ['Python', 'JavaScript', 'Vue.js', 'FastAPI', 'Automation', 'Taichi Lang', 'PostgreSQL', 'Selenium', 'Playwright', 'PyTest'],
-  },
-  {
-    role: 'Software QA Tester',
-    company: 'Lionbridge',
-    period: '2020 — 2022',
-    points: [
-      'Test case design and execution across Windows, console, and VR platforms.',
-      'API testing with Postman; network traffic analysis with Fiddler.',
-      'Test management and reporting via Azure DevOps; participated in Agile sprints.',
-    ],
-    tags: ['QA', 'Postman', 'Azure DevOps', 'Jira', 'Agile', 'Fiddler'],
-  },
-  {
-    role: 'Website Maintenance Technician',
-    company: 'Creo S.C.',
-    period: '2020',
-    points: [
-      'WordPress maintenance, plugin updates, and security monitoring for a local business website.',
-      'Frontend modifications (HTML/CSS), and content updates to enhance user experience.',
-      'System integration (payments, email automation) and performance optimization (caching, image compression).',
-      'Manual Testing, and customer support.',
-      'Implemented SEO best practices, improving search engine rankings and organic traffic.',
-    ],
-    tags: ['Testing', 'JIRA', 'Mantis', 'Cross-platform', 'Mobile'],
-  },
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { tm } = useI18n()
+
+// Company names and tags stay language-independent; copy comes from messages by index.
+const experienceMeta = [
+  { company: 'Self-employed', tags: ['Python', 'JavaScript', 'Vue.js', 'FastAPI', 'Automation', 'Taichi Lang', 'PostgreSQL', 'Selenium', 'Playwright', 'PyTest'] },
+  { company: 'Lionbridge',    tags: ['QA', 'Postman', 'Azure DevOps', 'Jira', 'Agile', 'Fiddler'] },
+  { company: 'Creo S.C.',     tags: ['Testing', 'JIRA', 'Mantis', 'Cross-platform', 'Mobile'] },
 ]
+
+const experience = computed(() =>
+  experienceMeta.map((m, i) => ({ ...m, ...tm('experience.items')[i] }))
+)
 </script>
 
 <style scoped>

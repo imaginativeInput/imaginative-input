@@ -10,7 +10,7 @@
         class="hamburger"
         :class="{ open: menuOpen }"
         @click="menuOpen = !menuOpen"
-        :aria-label="menuOpen ? 'Close menu' : 'Open menu'"
+        :aria-label="menuOpen ? $t('nav.closeMenu') : $t('nav.openMenu')"
         aria-controls="nav-links"
       >
         <span></span>
@@ -25,14 +25,15 @@
           class="nav-link"
           @click="navigate(s)"
         >
-          {{ s }}
+          {{ $t('nav.' + s) }}
         </a>
+        <LangSwitcher class="nav-lang" @changed="menuOpen = false" />
         <a
           href="mailto:imaginative.input@gmail.com"
           class="nav-cta btn btn-primary"
           @click="menuOpen = false"
         >
-          Hire me
+          {{ $t('nav.hire') }}
         </a>
       </div>
     </div>
@@ -41,6 +42,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+import LangSwitcher from './LangSwitcher.vue'
 
 defineProps({ sections: Array })
 const emit = defineEmits(['navigate'])
@@ -131,6 +133,12 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
 .nav-link:hover { color: var(--text); }
 .nav-link:hover::after { width: 100%; }
 
+.nav-lang {
+  margin-left: 4px;
+  padding-left: 18px;
+  border-left: 1px solid var(--border-subtle);
+}
+
 .nav-cta {
   margin-left: 8px;
   padding: 8px 18px;
@@ -188,6 +196,11 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
     margin-left: 0;
     padding: 12px 32px;
     font-size: 1rem;
+  }
+  .nav-lang {
+    margin-left: 0;
+    padding-left: 0;
+    border-left: none;
   }
 }
 </style>

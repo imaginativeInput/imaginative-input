@@ -11,7 +11,7 @@
       <div class="hero-left">
         <div class="hero-badge reveal">
           <span class="badge-dot"></span>
-          Available for freelance projects
+          {{ $t('hero.badge') }}
         </div>
 
         <h1 class="hero-name reveal reveal-delay-1">
@@ -26,21 +26,21 @@
         </p>
 
         <p class="hero-tagline reveal reveal-delay-2">
-          Turning complex problems into clean automation, tested APIs, and polished full-featured applications.
+          {{ $t('hero.tagline') }}
         </p>
 
         <div class="hero-actions reveal reveal-delay-3">
           <button class="btn btn-primary" @click="$emit('navigate', 'projects')">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-            View projects
+            {{ $t('hero.viewProjects') }}
           </button>
           <button class="btn btn-secondary" @click="$emit('navigate', 'contact')">
-            Get in touch
+            {{ $t('hero.getInTouch') }}
           </button>
         </div>
 
         <div class="hero-stack reveal reveal-delay-3">
-          <span class="stack-label">stack //</span>
+          <span class="stack-label">{{ $t('hero.stackLabel') }}</span>
           <div class="stack-tags">
             <span class="tag" v-for="t in stack" :key="t">{{ t }}</span>
           </div>
@@ -53,7 +53,7 @@
           <div class="pic-inner">
             <img
               :src="profilePic"
-              alt="Piotr Łatyński"
+              :alt="$t('hero.imgAlt')"
               class="pic-img"
               loading="eager"
             />
@@ -63,19 +63,21 @@
       </div>
     </div>
 
-    <button class="scroll-cue" @click="$emit('navigate', 'about')" aria-label="Scroll to about">
+    <button class="scroll-cue" @click="$emit('navigate', 'about')" :aria-label="$t('hero.scrollAria')">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
     </button>
   </section>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import profilePic from '@/assets/profile-pic.webp'
 
 defineEmits(['navigate'])
 
-const roles = ['Software Developer', 'Automation Engineer', 'QA Specialist', 'Freelancer']
+const { tm, locale } = useI18n()
+const roles = computed(() => tm('hero.roles'))
 const stack = ['Python', 'Vue.js', 'FastAPI', 'Playwright', 'PostgreSQL']
 
 const displayedRole = ref('')
@@ -86,7 +88,7 @@ let dir = 1
 let timeout = null
 
 function tick() {
-  const word = roles[roleIdx]
+  const word = roles.value[roleIdx]
   if (dir === 1) {
     isTyping.value = true
     displayedRole.value = word.slice(0, charIdx)
@@ -101,7 +103,7 @@ function tick() {
     displayedRole.value = word.slice(0, charIdx)
     charIdx--
     if (charIdx < 0) {
-      roleIdx = (roleIdx + 1) % roles.length
+      roleIdx = (roleIdx + 1) % roles.value.length
       dir = 1
       charIdx = 0
       timeout = setTimeout(tick, 200)
@@ -111,15 +113,27 @@ function tick() {
   }
 }
 
-onMounted(() => {
-  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  if (reduce) {
-    displayedRole.value = roles[0]
+const prefersReduced = () =>
+  window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+function startTyping() {
+  clearTimeout(timeout)
+  roleIdx = 0
+  charIdx = 0
+  dir = 1
+  if (prefersReduced()) {
+    displayedRole.value = roles.value[0]
     isTyping.value = false
     return
   }
+  displayedRole.value = ''
+  isTyping.value = true
   tick()
-})
+}
+
+onMounted(startTyping)
+// Re-type the role list in the newly selected language on a locale switch.
+watch(locale, startTyping)
 onUnmounted(() => clearTimeout(timeout))
 </script>
 

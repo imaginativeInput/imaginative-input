@@ -1,12 +1,10 @@
 <template>
   <section id="projects" class="section projects-section">
     <div class="container">
-      <p class="section-label reveal">// 02. projects</p>
-      <h2 class="section-title reveal reveal-delay-1">
-        My <span class="accent-text">projects</span>
-      </h2>
+      <p class="section-label reveal">{{ $t('projects.label') }}</p>
+      <h2 class="section-title reveal reveal-delay-1" v-html="$t('projects.title')"></h2>
       <p class="section-subtitle reveal reveal-delay-1">
-        Real-world projects — from client websites and automation to game development.
+        {{ $t('projects.subtitle') }}
       </p>
 
       <div class="projects-grid">
@@ -14,13 +12,13 @@
           class="project-card reveal"
           :class="`reveal-delay-${(i % 2) + 1}`"
           v-for="(p, i) in projects"
-          :key="p.title"
+          :key="i"
         >
           <div class="card-top">
             <span class="p-icon" aria-hidden="true" v-html="icons[p.icon]"></span>
-            <span class="p-status" :class="{ 'status-completed': p.status === 'Completed' }">
-              <span class="status-dot" :class="{ 'dot-completed': p.status === 'Completed' }"></span>
-              {{ p.status }}
+            <span class="p-status" :class="{ 'status-completed': p.completed }">
+              <span class="status-dot" :class="{ 'dot-completed': p.completed }"></span>
+              {{ p.completed ? $t('projects.statusCompleted') : $t('projects.statusInProgress') }}
             </span>
           </div>
 
@@ -28,7 +26,7 @@
           <p class="p-desc">{{ p.description }}</p>
 
           <ul class="p-features">
-            <li v-for="f in p.features" :key="f">
+            <li v-for="(f, fi) in p.features" :key="fi">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
               {{ f }}
             </li>
@@ -40,7 +38,7 @@
 
           <a v-if="p.link" :href="p.link" target="_blank" rel="noopener noreferrer" class="p-link">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            Visit website
+            {{ $t('projects.visit') }}
           </a>
         </article>
       </div>
@@ -49,66 +47,22 @@
 </template>
 
 <script setup>
-const projects = [
-  {
-    icon: 'house',
-    title: 'Domek Rzepiska — Vacation Rental',
-    status: 'Completed',
-    link: 'https://domekrzepiska.pl/',
-    description:
-      'A complete vacation rental website with a polished layout, interactive image viewer for property photos, and a reservation form with email integration.',
-    features: [
-      'Interactive image gallery & lightbox viewer',
-      'Reservation form with email sender',
-      'Clean, responsive layout',
-      'SEO-friendly structure',
-    ],
-    stack: ['Vue.js', 'HTML', 'CSS', 'JavaScript', 'FastAPI'],
-  },
-  {
-    icon: 'utensils',
-    title: 'Restaurant Application Engine with CMS — SaaS platform',
-    status: 'In progress',
-    link: 'https://szamma-mia.pl/',
-    description:
-      'A full-featured engine for building restaurant websites — elegant, responsive design with smooth navigation, an intuitive reservation and online ordering flow, a custom CMS, a well-thought-out database, built-in loyalty and marketing features, and a fast asynchronous API gluing everything together.',
-    features: [
-      'Responsive, mobile-first design',
-      'Interactive menu with category browsing',
-      'Online reservation and ordering system',
-      'Custom CMS for menu and content management',
-    ],
-    stack: ['Vue.js', 'HTML', 'CSS', 'JavaScript', 'FastAPI', 'PostgreSQL'],
-  },
-  {
-    icon: 'gamepad',
-    title: '2D Physics Puzzle Game',
-    status: 'In progress',
-    description:
-      'A 2D action/puzzle game with heavy focus on physics simulation — an educational game that teaches physics through fun gameplay, featuring procedural generation and an original soundtrack composed by me.',
-    features: [
-      'Realistic physics simulation engine',
-      'Procedurally generated levels',
-      'Educational physics concepts through gameplay',
-      'Original soundtrack & sound design',
-    ],
-    stack: ['Python', 'Pygame', 'TaichiLang', 'Procedural Generation'],
-  },
-  {
-    icon: 'bot',
-    title: 'Automated Chatbot System',
-    status: 'In progress',
-    description:
-      'An intelligent outreach automation platform that scrapes and analyzes user profiles, initiates personalised conversations, and generates context-aware AI responses — with minimal manual input.',
-    features: [
-      'Profile scraping & data enrichment',
-      'Automated conversation initiation',
-      'Lightweight context database for memory',
-      'AI-driven personalized response generation',
-    ],
-    stack: ['Python', 'JavaScript', 'Tampermonkey', 'FastAPI', 'PostgreSQL'],
-  },
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { tm } = useI18n()
+
+// Language-independent metadata, merged with translated copy by index.
+const projectsMeta = [
+  { icon: 'house',   completed: true,  link: 'https://domekrzepiska.pl/', stack: ['Vue.js', 'HTML', 'CSS', 'JavaScript', 'FastAPI'] },
+  { icon: 'utensils', completed: false, link: 'https://szamma-mia.pl/',     stack: ['Vue.js', 'HTML', 'CSS', 'JavaScript', 'FastAPI', 'PostgreSQL'] },
+  { icon: 'gamepad',  completed: false, link: null,                          stack: ['Python', 'Pygame', 'TaichiLang', 'Procedural Generation'] },
+  { icon: 'bot',      completed: false, link: null,                          stack: ['Python', 'JavaScript', 'Tampermonkey', 'FastAPI', 'PostgreSQL'] },
 ]
+
+const projects = computed(() =>
+  projectsMeta.map((m, i) => ({ ...m, ...tm('projects.items')[i] }))
+)
 
 const icons = {
   house: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 4l9 6.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5"/><path d="M9.5 21v-6h5v6"/></svg>`,

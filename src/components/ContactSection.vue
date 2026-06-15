@@ -5,20 +5,17 @@
 
         <!-- Left: text + links -->
         <div class="contact-left">
-          <p class="section-label reveal">// 05. contact</p>
-          <h2 class="section-title reveal reveal-delay-1">
-            Let's <span class="accent-text">connect</span>
-          </h2>
+          <p class="section-label reveal">{{ $t('contact.label') }}</p>
+          <h2 class="section-title reveal reveal-delay-1" v-html="$t('contact.title')"></h2>
           <p class="contact-desc reveal reveal-delay-1">
-            Got a project in mind or just want to talk shop?
-            I'm open to freelance work, collaborations, and interesting conversations.
+            {{ $t('contact.desc') }}
           </p>
 
           <div class="contact-links reveal reveal-delay-2">
             <a
               class="contact-row"
-              v-for="c in contacts"
-              :key="c.label"
+              v-for="(c, i) in contacts"
+              :key="i"
               :href="c.href"
               target="_blank"
               rel="noopener noreferrer"
@@ -38,15 +35,15 @@
           <div class="cta-card">
             <div class="cta-badge">
               <span class="cta-dot"></span>
-              Available for work
+              {{ $t('contact.ctaBadge') }}
             </div>
-            <h3 class="cta-heading">Ready to start something?</h3>
+            <h3 class="cta-heading">{{ $t('contact.ctaHeading') }}</h3>
             <p class="cta-body">
-              Whether it's a web app, an automation pipeline, or just a chat — send me a message.
+              {{ $t('contact.ctaBody') }}
             </p>
             <a href="mailto:imaginative.input@gmail.com" class="btn btn-primary cta-btn">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-              Send a message
+              {{ $t('contact.ctaBtn') }}
             </a>
           </div>
         </div>
@@ -57,10 +54,10 @@
     <footer class="footer">
       <div class="container footer-inner">
         <p class="footer-copy">
-          Built with <span class="accent-text">Vue.js</span> &nbsp;·&nbsp; Piotr Łatyński © {{ year }}
+          {{ $t('contact.footerBuilt') }} <span class="accent-text">Vue.js</span> &nbsp;·&nbsp; Piotr Łatyński © {{ year }}
         </p>
         <p class="footer-tip">
-          <span class="mono-hint">$</span>&nbsp;Try the terminal in the corner ↘
+          <span class="mono-hint">$</span>&nbsp;{{ $t('contact.footerTip') }}
         </p>
       </div>
     </footer>
@@ -68,34 +65,46 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 const year = new Date().getFullYear()
 
-const contacts = [
+const contactsMeta = [
   {
-    label: 'Email',
+    labelKey: 'rowEmail',
     value: 'imaginative.input@gmail.com',
     href: 'mailto:imaginative.input@gmail.com',
     icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>`,
   },
   {
-    label: 'GitHub',
+    labelKey: 'rowGithub',
     value: 'github.com/imaginativeInput',
     href: 'https://github.com/imaginativeInput',
     icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58v-2.23c-3.34.73-4.04-1.42-4.04-1.42-.55-1.39-1.34-1.76-1.34-1.76-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.34-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 016.01 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.6-2.81 5.63-5.48 5.92.43.37.82 1.1.82 2.22v3.29c0 .32.19.69.8.58C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>`,
   },
   {
-    label: 'Phone',
+    labelKey: 'rowPhone',
     value: '+48 514 233 672',
     href: 'tel:+48514233672',
     icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8 19.79 19.79 0 01.01 2.18 2 2 0 012 0h3a2 2 0 012 1.72c.13 1 .36 1.98.7 2.92a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.16-1.16a2 2 0 012.11-.45c.94.34 1.92.57 2.92.7A2 2 0 0122 14.92v2z"/></svg>`,
   },
   {
-    label: 'Location',
-    value: 'Piaseczno, Masovian, Poland',
+    labelKey: 'rowLocation',
+    valueKey: 'locationValue',
     href: '#contact',
     icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>`,
   },
 ]
+
+const contacts = computed(() =>
+  contactsMeta.map((c) => ({
+    ...c,
+    label: t('contact.' + c.labelKey),
+    value: c.valueKey ? t('contact.' + c.valueKey) : c.value,
+  }))
+)
 </script>
 
 <style scoped>

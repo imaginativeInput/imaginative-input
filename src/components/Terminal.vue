@@ -6,7 +6,7 @@
       class="term-toggle"
       @click="minimized = !minimized"
       :aria-expanded="!minimized"
-      :title="minimized ? 'Open terminal' : 'Minimize terminal'"
+      :title="minimized ? $t('terminal.toggleOpen') : $t('terminal.toggleMinimize')"
     >
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/>
@@ -31,11 +31,7 @@
 
         <!-- Output -->
         <div class="term-output" ref="outputEl">
-          <div class="term-welcome">
-            <span class="tc-green">Welcome!</span>
-            Type <span class="tc-accent">help</span> for available commands.
-            Use <span class="tc-accent">↑↓</span> for history, <span class="tc-accent">Tab</span> to autocomplete.
-          </div>
+          <div class="term-welcome" v-html="$t('terminal.welcome')"></div>
 
           <div v-for="(entry, i) in history" :key="i" class="term-entry">
             <div v-if="entry.type === 'cmd'" class="term-cmd-line">
@@ -61,7 +57,7 @@
             autocorrect="off"
             autocapitalize="off"
             spellcheck="false"
-            placeholder="type a command…"
+            :placeholder="$t('terminal.placeholder')"
             aria-label="Terminal input"
           />
         </div>
@@ -73,9 +69,13 @@
 
 <script setup>
 import { ref, nextTick, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { SUPPORTED, setLocale } from '@/i18n'
 
 const props = defineProps({ sections: { type: Array, default: () => [] } })
 const emit = defineEmits(['navigate'])
+
+const { t } = useI18n()
 
 const minimized = ref(true)
 const cmdInput  = ref('')
@@ -126,7 +126,7 @@ function onKey(e) {
 
 // ── Autocomplete ──────────────────────────────────────────────────────────────
 const ALL_CMDS = [
-  'help', 'ls', 'whoami', 'skills', 'projects', 'contact', 'github', 'clear', 'goto', 'cd',
+  'help', 'ls', 'whoami', 'skills', 'projects', 'contact', 'github', 'lang', 'clear', 'goto', 'cd',
   ...props.sections,
 ]
 
@@ -164,6 +164,7 @@ function run(raw) {
     projects: cmdProjects,
     contact:  cmdContact,
     github:   cmdGithub,
+    lang:     () => cmdLang(args[0]),
     goto:     () => cmdGoto(args[0]),
     cd:       () => cmdGoto(args[0]),
   }
@@ -176,7 +177,7 @@ function run(raw) {
   if (handlers[cmd]) {
     handlers[cmd]()
   } else {
-    push('err', `command not found: ${raw}. Type help for available commands.`)
+    push('err', t('terminal.notFound', { cmd: raw }))
   }
 
   scroll()
@@ -184,89 +185,54 @@ function run(raw) {
 
 // ── Commands ──────────────────────────────────────────────────────────────────
 function cmdHelp() {
-  push('out', `<div class="tc-block">
-  <div class="tc-green" style="margin-bottom:6px">Available commands:</div>
-  <div class="tc-grid">
-    <span class="tc-accent">help</span>            <span class="tc-dim">show this message</span>
-    <span class="tc-accent">ls</span>              <span class="tc-dim">list all sections</span>
-    <span class="tc-accent">goto &lt;section&gt;</span> <span class="tc-dim">navigate to section</span>
-    <span class="tc-accent">whoami</span>          <span class="tc-dim">display bio</span>
-    <span class="tc-accent">skills</span>          <span class="tc-dim">list tech stack</span>
-    <span class="tc-accent">projects</span>        <span class="tc-dim">show current work</span>
-    <span class="tc-accent">contact</span>         <span class="tc-dim">contact info</span>
-    <span class="tc-accent">github</span>          <span class="tc-dim">open GitHub profile</span>
-    <span class="tc-accent">clear</span>           <span class="tc-dim">clear terminal</span>
-  </div>
-  <div class="tc-dim" style="margin-top:8px">Tip: type a section name directly to navigate.</div>
-</div>`)
+  push('out', t('terminal.help'))
 }
 
 function cmdLs() {
   const items = props.sections.map(s => `<span class="tc-accent">📁 ${s}/</span>`).join('')
-  push('out', `<div class="tc-dim" style="margin-bottom:3px">Sections:</div><div class="tc-ls">${items}</div>`)
+  push('out', `<div class="tc-dim" style="margin-bottom:3px">${t('terminal.lsTitle')}</div><div class="tc-ls">${items}</div>`)
 }
 
 function cmdWhoami() {
-  push('out', `<div class="tc-block">
-  <div><span class="tc-green">Piotr Łatyński</span> — Software Developer</div>
-  <div class="tc-dim">📍 Piaseczno, Masovian, Poland</div>
-  <div class="tc-dim">🐍 Python · JavaScript · Vue.js · FastAPI · Playwright · PostgreSQL</div>
-  <div class="tc-dim">✉  imaginative.input@gmail.com</div>
-  <div class="tc-dim">🐙 github.com/imaginativeInput</div>
-</div>`)
+  push('out', t('terminal.whoami'))
 }
 
 function cmdSkills() {
-  push('out', `<div class="tc-block">
-  <div class="tc-green" style="margin-bottom:4px">Tech Stack:</div>
-  <div><span class="tc-accent">Languages  </span> <span class="tc-dim">Python · JavaScript · SQL</span></div>
-  <div><span class="tc-accent">Frontend   </span> <span class="tc-dim">Vue.js · HTML/CSS</span></div>
-  <div><span class="tc-accent">Backend    </span> <span class="tc-dim">FastAPI · PostgreSQL · SQLite</span></div>
-  <div><span class="tc-accent">Testing    </span> <span class="tc-dim">Playwright · Selenium · PyTest · Postman</span></div>
-  <div><span class="tc-accent">Tools      </span> <span class="tc-dim">Git · Azure DevOps · Jira · Swagger</span></div>
-  <div><span class="tc-accent">Specialised</span> <span class="tc-dim">Taichi Lang · OCR/CV</span></div>
-</div>`)
+  push('out', t('terminal.skills'))
 }
 
 function cmdProjects() {
-  push('out', `<div class="tc-block">
-  <div class="tc-green" style="margin-bottom:4px">Projects:</div>
-  <div>🏠 <span class="tc-accent">Domek Rzepiska — Vacation Rental</span> <span class="tc-dim">[completed]</span></div>
-  <div class="tc-dim" style="padding-left:20px">Vue.js · FastAPI · domekrzepiska.pl</div>
-  <div style="margin-top:5px">🍽️ <span class="tc-accent">Restaurant Application Engine</span> <span class="tc-dim">[in progress]</span></div>
-  <div class="tc-dim" style="padding-left:20px">Vue.js · FastAPI · CSS</div>
-  <div style="margin-top:5px">🎮 <span class="tc-accent">2D Physics Puzzle Game</span> <span class="tc-dim">[in progress]</span></div>
-  <div class="tc-dim" style="padding-left:20px">Python · Pygame · Procedural Generation</div>
-  <div style="margin-top:5px">🤖 <span class="tc-accent">Automated Chatbot System</span> <span class="tc-dim">[in progress]</span></div>
-  <div class="tc-dim" style="padding-left:20px">Python · Playwright · PostgreSQL</div>
-</div>`)
+  push('out', t('terminal.projects'))
 }
 
 function cmdContact() {
-  push('out', `<div class="tc-block">
-  <div class="tc-green" style="margin-bottom:4px">Contact:</div>
-  <div>✉  <span class="tc-accent">imaginative.input@gmail.com</span></div>
-  <div>📱 <span class="tc-accent">+48 514 233 672</span></div>
-  <div>🐙 <span class="tc-accent">github.com/imaginativeInput</span></div>
-  <div>📍 <span class="tc-dim">Piaseczno, Masovian, Poland</span></div>
-</div>`)
+  push('out', t('terminal.contact'))
 }
 
 function cmdGithub() {
   window.open('https://github.com/imaginativeInput', '_blank', 'noopener,noreferrer')
-  push('out', '<span class="tc-green">✓ Opening GitHub profile…</span>')
+  push('out', `<span class="tc-green">${t('terminal.githubOpening')}</span>`)
+}
+
+function cmdLang(target) {
+  if (target && SUPPORTED.includes(target)) {
+    setLocale(target)
+    push('out', `<span class="tc-green">${t('terminal.langSet')}</span> <span class="tc-accent">${target}</span>`)
+  } else {
+    push('err', t('terminal.langUsage'))
+  }
 }
 
 function cmdGoto(target) {
   if (!target) {
-    push('err', `Usage: goto <section>  |  sections: ${props.sections.join(', ')}`)
+    push('err', t('terminal.gotoUsage', { sections: props.sections.join(', ') }))
     return
   }
   if (props.sections.includes(target)) {
     emit('navigate', target)
-    push('out', `<span class="tc-green">✓ Navigating to</span> <span class="tc-accent">${target}</span>`)
+    push('out', `<span class="tc-green">${t('terminal.navigating')}</span> <span class="tc-accent">${target}</span>`)
   } else {
-    push('err', `Section "${target}" not found. Available: ${props.sections.join(', ')}`)
+    push('err', t('terminal.sectionNotFound', { target, sections: props.sections.join(', ') }))
   }
 }
 

@@ -5,20 +5,10 @@
 
         <!-- Text side -->
         <div class="about-text">
-          <p class="section-label reveal">// 01. about</p>
-          <h2 class="section-title reveal reveal-delay-1">
-            A little about <span class="accent-text">me</span>
-          </h2>
-          <p class="about-desc reveal reveal-delay-2">
-            I'm a software developer from Piaseczno, Poland with a background in both development
-            and quality assurance. I have a strong eye for detail — a habit built from years of
-            professional testing — and I apply it to everything I write.
-          </p>
-          <p class="about-desc reveal reveal-delay-2">
-            My work spans automation scripts, REST APIs, and full-featured responsive applications. I enjoy finding
-            the simplest path through a complex problem, and I'm always looking for things to
-            learn along the way.
-          </p>
+          <p class="section-label reveal">{{ $t('about.label') }}</p>
+          <h2 class="section-title reveal reveal-delay-1" v-html="$t('about.title')"></h2>
+          <p class="about-desc reveal reveal-delay-2">{{ $t('about.desc1') }}</p>
+          <p class="about-desc reveal reveal-delay-2">{{ $t('about.desc2') }}</p>
 
           <div class="about-meta reveal reveal-delay-3">
             <div class="meta-item" v-for="m in meta" :key="m.label">
@@ -28,9 +18,9 @@
           </div>
 
           <div class="about-hobbies reveal reveal-delay-3">
-            <span class="meta-label">Interests</span>
+            <span class="meta-label">{{ $t('about.interests') }}</span>
             <div class="hobby-list">
-              <span class="hobby-chip" v-for="h in hobbies" :key="h">{{ h }}</span>
+              <span class="hobby-chip" v-for="(h, i) in hobbies" :key="i">{{ h }}</span>
             </div>
           </div>
         </div>
@@ -74,16 +64,19 @@
 </template>
 
 <script setup>
-const meta = [
-  { label: 'Location', value: 'Piaseczno, Masovian, Poland' },
-  { label: 'Email',    value: 'imaginative.input@gmail.com' },
-  { label: 'GitHub',   value: 'github.com/imaginativeInput' },
-  { label: 'Languages', value: 'Polish & English' },
-]
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 
-const hobbies = [
-  'Songwriting', 'Visual Arts', 'Gym', 'Parkour', 'Physics', 'Robotics', 'Gaming',
-]
+const { t, tm } = useI18n()
+
+const meta = computed(() => [
+  { label: t('about.metaLocation'),  value: t('about.locationValue') },
+  { label: t('about.metaEmail'),     value: 'imaginative.input@gmail.com' },
+  { label: t('about.metaGithub'),    value: 'github.com/imaginativeInput' },
+  { label: t('about.metaLanguages'), value: t('about.languagesValue') },
+])
+
+const hobbies = computed(() => tm('about.hobbies'))
 </script>
 
 <style scoped>
